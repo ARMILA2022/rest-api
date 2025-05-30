@@ -1,9 +1,40 @@
 <?php 
+use GuzzleHttp\Client;
+#[\AllowDynamicProperties]
 
 class Mahasiswa_model extends CI_model {
     public function getAllMahasiswa()
     {
-        return $this->db->get('mahasiswa')->result_array();
+        $client = new Client();
+
+        $response = $client->request('GET', 'http://localhost/rest-api/wpu-rest-server/api/mahasiswa', [
+            'auth' => ['naura', '271003'],
+            'query' => [
+                'X-API-KEY' => 'Fanivia0',
+            ]
+        ]);
+
+        $result = json_decode($response->getBody()->getContents(), true);
+
+        return $result['data'];
+
+    }
+
+        public function getMahasiswaById($id)
+    {
+        $client = new Client();
+
+        $response = $client->request('GET', 'http://localhost/rest-api/wpu-rest-server/api/mahasiswa', [
+            'auth' => ['naura', '271003'],
+            'query' => [
+                'X-API-KEY' => 'Fanivia0',
+                'id' => $id
+            ]
+        ]);
+
+        $result = json_decode($response->getBody()->getContents(), true);
+
+        return $result['data'][0];
     }
 
     public function tambahDataMahasiswa()
@@ -22,11 +53,6 @@ class Mahasiswa_model extends CI_model {
     {
         // $this->db->where('id', $id);
         $this->db->delete('mahasiswa', ['id' => $id]);
-    }
-
-    public function getMahasiswaById($id)
-    {
-        return $this->db->get_where('mahasiswa', ['id' => $id])->row_array();
     }
 
     public function ubahDataMahasiswa()

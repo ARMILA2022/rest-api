@@ -35,10 +35,20 @@
  * @since	Version 1.0.0
  * @filesource
  */
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-#[\AllowDynamicProperties]
+/**
+ * Application Controller Class
+ *
+ * This class object is the super class that every library in
+ * CodeIgniter will be assigned to.
+ *
+ * @package		CodeIgniter
+ * @subpackage	Libraries
+ * @category	Libraries
+ * @author		EllisLab Dev Team
+ * @link		https://codeigniter.com/user_guide/general/controllers.html
+ */
 class CI_Controller {
 
 	/**
@@ -70,6 +80,8 @@ class CI_Controller {
 		log_message('info', 'Controller Class Initialized');
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
 	 * Get the CI singleton
 	 *
@@ -80,4 +92,5 @@ class CI_Controller {
 	{
 		return self::$instance;
 	}
+
 }
