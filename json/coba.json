@@ -1,0 +1,30 @@
+[
+    {
+         "nama": "Armila", 
+         "umur": 20,
+         "nrp": "2217020091",
+         "lulus": true,
+         "hobby": [
+             "Memasak",
+             "Rebahan"
+        ],
+         "pembimbing": {
+         "pembimbing1": "Raju Wandira",
+         "pembimbing2": "Domi Sepri"
+        }
+    },
+    {
+         "nama": "Armila", 
+         "umur": 20,
+         "nrp": "2217020091",
+         "lulus": true,
+         "hobby": [
+             "Memasak",
+             "Rebahan"
+        ],
+         "pembimbing": {
+         "pembimbing1": "Raju Wandira",
+         "pembimbing2": "Domi Sepri"
+        }
+    }
+]

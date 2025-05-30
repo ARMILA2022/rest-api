@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WPU Movie</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+      <a class="navbar-brand mb-0 h1" href="#">WPU Movie</a>
+      <span class="ml-2 h5 text-primary mb-0">Search Movie</span>
+    </div>
+  </div>
+</nav>
+
+<!-- Main search area -->
+<div class="row mt-4 justify-content-center">
+  <div class="col-md-8">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="Movie title.." id="search-input">
+      <button class="btn btn-dark" type="button" id="search-button">Search</button>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="container mt-4">
+  <div class="row" id="movie-list"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="movieDetailModal" tabindex="-1" role="dialog" aria-labelledby="movieDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="movieDetailModalLabel">Movie Details</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="movie-detail"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js"></script>
+<script>
+  function searchMovie(query = '') {
+    const searchQuery = query || $('#search-input').val();
+    $('#movie-list').html('');
+    $.ajax({
+      url: 'http://www.omdbapi.com',
+      type: 'get',
+      dataType: 'json',
+      data: {
+        'apikey': '52ac2799',
+        's': searchQuery
+      },
+      success: function (result) {
+        if (result.Response == "True") {
+          $.each(result.Search, function (i, data) {
+            $('#movie-list').append(`
+              <div class="col-md-4 mb-3">
+                <div class="card">
+                  <img src="${data.Poster !== "N/A" ? data.Poster : 'https://via.placeholder.com/400x600?text=No+Image'}" class="card-img-top" alt="${data.Title}">
+                  <div class="card-body">
+                    <h5 class="card-title">${data.Title}</h5>
+                    <p class="card-text">Year: ${data.Year}</p>
+                    <a href="#" class="btn btn-primary btn-detail" data-id="${data.imdbID}" data-toggle="modal" data-target="#movieDetailModal">See Detail</a>
+                  </div>
+                </div>
+              </div>
+            `);
+          });
+        } else {
+          $('#movie-list').html(`
+            <div class="col">
+              <h1 class="text-center">${result.Error}</h1>
+            </div>
+          `);
+        }
+        $('#search-input').val('');
+      }
+    });
+  }
+
+  $(document).ready(function () {
+    $('#search-button').on('click', function () {
+      searchMovie();
+    });
+
+    $('#search-input').on('keydown', function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        searchMovie();
+      }
+    });
+
+    $('#movie-list').on('click', '.btn-detail', function () {
+      let imdbID = $(this).data('id');
+      $.ajax({
+        url: 'http://www.omdbapi.com',
+        type: 'get',
+        dataType: 'json',
+        data: {
+          'apikey': '52ac2799',
+          'i': imdbID
+        },
+        success: function (movie) {
+          $('#movie-detail').html(`
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-4">
+                  <img src="${movie.Poster}" class="img-fluid" />
+                </div>
+                <div class="col-md-8">
+                  <ul class="list-group">
+                    <li class="list-group-item"><strong>Title:</strong> ${movie.Title}</li>
+                    <li class="list-group-item"><strong>Released:</strong> ${movie.Released}</li>
+                    <li class="list-group-item"><strong>Genre:</strong> ${movie.Genre}</li>
+                    <li class="list-group-item"><strong>Director:</strong> ${movie.Director}</li>
+                    <li class="list-group-item"><strong>Plot:</strong> ${movie.Plot}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          `);
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
