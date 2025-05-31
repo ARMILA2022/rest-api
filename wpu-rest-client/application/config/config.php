@@ -23,7 +23,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/rest-api/wpu-rest-client/';
+$config['base_url'] = 'http://localhost/.rest-api/wpu-rest-client/';
 
 /*
 |--------------------------------------------------------------------------
@@ -137,6 +137,7 @@ $config['subclass_prefix'] = 'MY_';
 |	autoloading (application/config/autoload.php)
 */
 $config['composer_autoload'] = FCPATH . 'vendor/autoload.php';
+
 /*
 |--------------------------------------------------------------------------
 | Allowed URL Characters

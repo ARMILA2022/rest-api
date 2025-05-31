@@ -20,6 +20,23 @@ $subscriber = $result['items'][0]['statistics']['subscriberCount'];
 $urllatestVideo = 'https://www.googleapis.com/youtube/v3/search?key=AIzaSyBpo-RsOjYaFpPvZKaUAggbdpZXLZI5U7U&channelId=UCkXmLjEr95LVtGuIm3l2dPg&maxResults=1&order=date&part=snippet';
 $result = get_CURL($urllatestVideo);
 $latesVideoId =$result['items']['0']['id']['videoId'];
+
+//Instagram API
+$clientId = '17841409480162250';
+$accessToken = 'IGAAJ62ZBGuc1dBZAE5SM0dpTGowc0VNWkRTWGtPSUVCYXBGYjg0MWRhcEJsTmxjc2JHYnh3Nm5BTjVaSEJqM2x3X1pfa1FBRVU4OTFXTDJWVEdQcEFYT3dCT0VtVW5pd0NhTkxHOG1kejVSc21HWjNCVlZA3WHFuV2ZAhM0NFN3RkRQZDZD';
+
+$result = get_CURL("https://graph.instagram.com/v22.0/me?fields=username,profile_picture_url,followers_count&access_token=$accessToken");
+$usernameIG = $result['username'];
+$profilePictureIG = $result['profile_picture_url'];
+$followersIG = $result['followers_count'];
+
+//media IG
+$media = get_CURL("https://graph.instagram.com/me/media?fields=id,caption,media_url,media_type,timestamp&access_token=$accessToken");
+$gambar = "";
+if (isset($media['data']) && count($media['data']) >= 1) {
+    $gambar = $media['data'][0]['media_url'];
+}
+
 ?>
 
 
@@ -68,7 +85,7 @@ $latesVideoId =$result['items']['0']['id']['videoId'];
         <div class="text-center">
           <img src="img/profile1.png" class="rounded-circle img-thumbnail">
           <h1 class="display-4">Armila Aini </h1>
-          <h3 class="lead">Lecturer | Programmer | Youtuber</h3>
+          <h3 class="lead">College Student | Programmer | Youtuber</h3>
         </div>
       </div>
     </div>
@@ -128,16 +145,16 @@ $latesVideoId =$result['items']['0']['id']['videoId'];
       <div class="col-md-5 mb-4">
         <div class="row mb-2">
           <div class="col-md-4 text-center">
-            <img src="img/profile1.png" width="100%" class="rounded-circle img-thumbnail">
+            <img src="<?= $profilePictureIG; ?>" width="100%" class="rounded-circle img-thumbnail">
           </div>
           <div class="col-md-8 d-flex flex-column justify-content-center">
-            <h5>@milllo.oo</h5>
-            <p>37 followers</p>
+            <h5><?= $usernameIG; ?></h5>
+            <p><?= $followersIG; ?> Followers</p>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <img src="img/thumbs/1.png" class="img-fluid rounded">
+            <img src="<?= $gambar; ?>" class="img-fluid rounded">
           </div>
         </div>
       </div>
@@ -236,8 +253,8 @@ $latesVideoId =$result['items']['0']['id']['videoId'];
             <ul class="list-group mb-4">
               <li class="list-group-item"><h3>Location</h3></li>
               <li class="list-group-item">My Office</li>
-              <li class="list-group-item">Jl. Setiabudhi No. 193, Bandung</li>
-              <li class="list-group-item">West Java, Indonesia</li>
+              <li class="list-group-item">Jl. Ekora No. 111, Medan</li>
+              <li class="list-group-item">North Sumatra, Indonesia</li>
             </ul>
           </div>
 
