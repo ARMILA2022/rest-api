@@ -6,7 +6,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 require APPPATH . 'libraries/REST_Controller.php';
 require APPPATH . 'libraries/Format.php';
 
-
 class Mahasiswa extends REST_Controller
 {
     public function __construct()
@@ -14,21 +13,27 @@ class Mahasiswa extends REST_Controller
         parent::__construct();
         $this->load->model('Mahasiswa_model', 'mahasiswa');
 
+        // Batas rate limit untuk masing-masing method
         $this->methods['index_get']['limit'] = 10;
         $this->methods['index_delete']['limit'] = 2;
         $this->methods['index_put']['limit'] = 2;
         $this->methods['index_post']['limit'] = 2;
-
     }
 
-
-    public function index_get() 
+    public function index_get()
     {
         $id = $this->get('id');
-        if( $id === null) {
-            $mahasiswa = $this->mahasiswa->getMahasiswa();
-        } else {
+        $keyword = $this->get('keyword');
+
+        if ($id !== null) {
+            // Ambil data berdasarkan ID
             $mahasiswa = $this->mahasiswa->getMahasiswa($id);
+        } elseif ($keyword !== null) {
+            // Ambil data berdasarkan pencarian keyword
+            $mahasiswa = $this->mahasiswa->cariMahasiswa($keyword);
+        } else {
+            // Ambil semua data
+            $mahasiswa = $this->mahasiswa->getMahasiswa();
         }
 
         if ($mahasiswa) {
@@ -39,7 +44,7 @@ class Mahasiswa extends REST_Controller
         } else {
             $this->response([
                 'status' => false,
-                'message' => 'id not found'
+                'message' => 'Data tidak ditemukan'
             ], REST_Controller::HTTP_NOT_FOUND);
         }
     }
@@ -48,33 +53,31 @@ class Mahasiswa extends REST_Controller
     {
         $id = $this->delete('id');
 
-        if($id === null) {
-                $this->response([
+        if ($id === null) {
+            $this->response([
                 'status' => false,
-                'message' => 'provide an id!'
+                'message' => 'Provide an ID!'
             ], REST_Controller::HTTP_BAD_REQUEST);
         } else {
             if ($this->mahasiswa->deleteMahasiswa($id) > 0) {
-            //ok
-            $this->response([
-                'status' => true,
-                'id' => $id,
-                'message' => 'deleted.'
-            ], REST_Controller::HTTP_OK);
-        } else {
-            //id not found
                 $this->response([
-                'status' => false,
-                'message' => 'id not found!'
-            ], REST_Controller::HTTP_NOT_FOUND);
+                    'status' => true,
+                    'id' => $id,
+                    'message' => 'Deleted.'
+                ], REST_Controller::HTTP_OK);
+            } else {
+                $this->response([
+                    'status' => false,
+                    'message' => 'ID not found!'
+                ], REST_Controller::HTTP_NOT_FOUND);
+            }
         }
     }
-}
 
     public function index_post()
     {
         $data = [
-            'nrp' => $this-> post('nrp'),
+            'nrp' => $this->post('nrp'),
             'nama' => $this->post('nama'),
             'email' => $this->post('email'),
             'jurusan' => $this->post('jurusan')
@@ -83,12 +86,12 @@ class Mahasiswa extends REST_Controller
         if ($this->mahasiswa->createMahasiswa($data) > 0) {
             $this->response([
                 'status' => true,
-                'message' => 'new mahasiswa has been created.'
+                'message' => 'New mahasiswa has been created.'
             ], REST_Controller::HTTP_CREATED);
         } else {
             $this->response([
                 'status' => false,
-                'message' => 'failed to create new data!'
+                'message' => 'Failed to create new data!'
             ], REST_Controller::HTTP_BAD_REQUEST);
         }
     }
@@ -102,15 +105,16 @@ class Mahasiswa extends REST_Controller
             'email' => $this->put('email'),
             'jurusan' => $this->put('jurusan')
         ];
+
         if ($this->mahasiswa->updateMahasiswa($data, $id) > 0) {
-            $this->response ([
+            $this->response([
                 'status' => true,
-                'message' => 'data mahasiswa has been updated.'
+                'message' => 'Data mahasiswa has been updated.'
             ], REST_Controller::HTTP_OK);
         } else {
-            $this->response ([
+            $this->response([
                 'status' => false,
-                'message' => 'failed to update data.'
+                'message' => 'Failed to update data.'
             ], REST_Controller::HTTP_BAD_REQUEST);
         }
     }
